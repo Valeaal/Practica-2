@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_tV9QMHF8Ee6XZ_LY0_Kn9g" name="practica2">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_tZlL8HF8Ee6XZ_LY0_Kn9g">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+</uml:Model>
