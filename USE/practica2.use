@@ -1,0 +1,48 @@
+model Practica2
+
+class Estacion
+end
+
+class Tren
+end
+
+class Linea
+end
+
+class Via
+end
+
+association sentidoIda between
+    Tren[0..*] role trenIda
+    Via[0..*] role viaIda 
+end
+
+association sentidoVuelta between
+    Tren[0..*] role trenVuelta
+    Via[0..*] role viaVuelta
+end
+
+association llegaAEstacion between
+    Tren[0..*] role trenEstacion
+    Estacion[0..*] role estacionTren
+end
+
+association trenPerteneceALinea between
+    Tren[0..*] role trenDeLinea
+    Linea[1] role circulaLinea
+end
+
+associationclass segmentoEstacion between
+    Estacion [1] role estacionSalida
+    Estacion[1] role estacionDestino
+end
+
+aggregation segmentoEstacionLinea between
+    Linea[1..*] role lineaDelSegmento
+    segmentoEstacion[0..*] role segmentoEstacion
+end
+
+composition segmentoTieneDosVias between
+    segmentoEstacion[1] role segmento
+    Via[2] role vias
+end
