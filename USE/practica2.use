@@ -46,3 +46,34 @@ composition segmentoTieneDosVias between
     segmentoEstacion[1] role segmento
     Via[2] role vias
 end
+
+constraints
+
+-- En esta contraint comprobamos que la estacion de salida y la de destino no sean la misma
+
+context segmentoEstacion inv DiferentesEstaciones:
+    self.estacionSalida <> self.estacionDestino
+
+-- Comprobaremos que haya como maximo un tren por via en cada sentido
+
+context Via inv UnTrenPorVia:
+    Via.allInstances()->forAll(vias | vias.trenIda->size() <= 1) and
+    Via.allInstances()->forAll(vias | vias.trenVuelta->size() <= 1)
+
+-- Numero de lineas mayor que cero
+
+context Linea inv LineasMayorQueCero:
+    Linea.allInstances()->size() > 0
+
+-- Numero de segmentos mayor que cero para cada linea
+
+context Linea inv SegmentosMayorQueCero:
+    Linea.allInstances().segmentoEstacion->size() > 0
+
+-- Numero de estaciones mayor que cero para cada linea
+
+
+
+
+
+
