@@ -3,9 +3,9 @@ Restricciones a implementar:
 (Hecha)En un momento dado solo puede haber a lo sumo un tren en cada segmento de vía en cada sentido
 (Hecha)Una estación no puede estar relacionada consigo misma
 (Hecha)El número de segmentos en una línea es mayor que 0
-El número de estaciones en una línea es mayor o igual que 2
-Los trenes deben esperar 1 min en las estaciones
-Los trenes deben tardar 2 min entre estación y estación
+(Hecha)El número de estaciones en una línea es mayor o igual que 2
+(Hecha)Los trenes deben esperar 1 min en las estaciones
+(Hecha)Los trenes deben tardar 2 min entre estación y estación
 Un tren no puedo moverse hasta que no sea reparado
 Operacion mover?
 Operacion Reparar?

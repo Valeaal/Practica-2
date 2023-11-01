@@ -1,9 +1,92 @@
 model Practica2
 
+-- Reloj para apartado C --
+
+class Clock 
+  attributes
+    NOW : Integer init = 0
+    resolution: Integer init = 1 
+  operations
+    tick() 
+      begin
+        self.NOW:=self.NOW + self.resolution;
+        for o in self.ao do 
+            o.tick()
+        end;
+      end
+    run (n:Integer)
+      begin
+        for i in Sequence{1..n} do
+          self.tick()
+        end 
+      end
+end
+
+abstract class ActiveObject
+  operations
+    tick() begin end 
+end
+
+association Time between 
+  Clock [1] 
+  ActiveObject [*] role ao ordered
+end
+
+----------------------------
+
 class Estacion
 end
 
-class Tren
+class Tren < ActiveObject
+    attributes
+        speed : Real init: 5
+        position : Real init: 0
+        isMoving : Boolean init: false
+        stopTime : Real init: 0
+        movingTime : Real init: 0
+    operations
+        accelerate() 
+        begin
+            self.speed:=self.speed+1
+        end
+        decelerate()
+        begin
+            if self.speed > 0 then 
+                self.speed:=self.speed-1
+            end;
+            if self.speed = 0 then 
+                self.isMoving:=false
+            end;
+        end       
+        move()
+        begin
+            self.isMoving:=true;
+        end
+        stop()
+        begin
+            self.isMoving:=false;
+        end
+        tick()
+        begin
+            -- Los trenes deben tardar 2 min entre estación y estación
+            if self.isMoving then 
+                self.position:=self.position + self.speed*self.clock.resolution;
+                self.movingTime := self.movingTime + self.clock.resolution;
+                if self.movingTime = 120 then
+                    self.movingTime := 0;
+                    self.stop();
+                end;
+            end;
+            -- Los trenes deben esperar 1 min en las estaciones
+            if not self.isMoving then
+                self.stopTime:=self.stopTime + self.clock.resolution;
+                if self.stopTime = 60 then
+                    self.stopTime := 0;
+                    self.move();
+                end;
+            end;
+        end
+
 end
 
 class Linea
@@ -47,6 +130,8 @@ composition segmentoTieneDosVias between
     Via[2] role vias
 end
 
+
+
 constraints
 
 -- En esta contraint comprobamos que la estacion de salida y la de destino no sean la misma
@@ -70,7 +155,26 @@ context Linea inv LineasMayorQueCero:
 context Linea inv SegmentosMayorQueCero:
     Linea.allInstances().segmentoEstacion->size() > 0
 
--- Numero de estaciones mayor que cero para cada linea
+-- El número de estaciones en una línea es mayor o igual que 2 (si una linea tiene un número de segmentos mayor que 0, entendemos que tendrá como mínimo 2 estaciones conectadas
+-- por el segmento, asique la restricción que implementaremos será que si SegmentosMayorQueCero -> relacion Estacion-Estacion no está "vacía")
+
+context Linea inv nEstacionesMayorQueDos:
+    self.segmentoEstacion->size() > 0 implies self.segmentoEstacion->forAll(s | s.estacionDestino->notEmpty() and s.estacionSalida->notEmpty())
+
+
+-- Los trenes deben tardar 2 min entre estación y estación
+
+
+-- Un tren no puedo moverse hasta que no sea reparado
+
+
+-- Operacion mover?
+
+
+-- Operacion Reparar?
+
+
+
 
 
 
