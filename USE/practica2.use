@@ -35,6 +35,8 @@ end
 ----------------------------
 
 class Estacion
+    attributes
+        position : Real
 end
 
 class Tren < ActiveObject
@@ -44,20 +46,8 @@ class Tren < ActiveObject
         isMoving : Boolean init: false
         stopTime : Real init: 0
         movingTime : Real init: 0
-    operations
-        accelerate() 
-        begin
-            self.speed:=self.speed+1
-        end
-        decelerate()
-        begin
-            if self.speed > 0 then 
-                self.speed:=self.speed-1
-            end;
-            if self.speed = 0 then 
-                self.isMoving:=false
-            end;
-        end       
+        isOutOfOrder : Boolean init : false
+    operations     
         move()
         begin
             self.isMoving:=true;
@@ -76,6 +66,9 @@ class Tren < ActiveObject
                     self.movingTime := 0;
                     self.stop();
                 end;
+                if self.isOutOfOrder=true then
+                    self.reparar();
+                end;
             end;
             -- Los trenes deben esperar 1 min en las estaciones
             if not self.isMoving then
@@ -86,7 +79,16 @@ class Tren < ActiveObject
                 end;
             end;
         end
-
+        -- Un tren tarda 1 hora en ser reparado
+        reparar()
+        begin
+            self.stopTime:=self.stopTime + self.clock.resolution;
+            if self.stopTime = 3600 then
+                self.isOutOfOrder := false;
+                self.stopTime := 0;
+                self.move();
+            end;
+        end
 end
 
 class Linea
@@ -160,18 +162,6 @@ context Linea inv SegmentosMayorQueCero:
 
 context Linea inv nEstacionesMayorQueDos:
     self.segmentoEstacion->size() > 0 implies self.segmentoEstacion->forAll(s | s.estacionDestino->notEmpty() and s.estacionSalida->notEmpty())
-
-
--- Los trenes deben tardar 2 min entre estación y estación
-
-
--- Un tren no puedo moverse hasta que no sea reparado
-
-
--- Operacion mover?
-
-
--- Operacion Reparar?
 
 
 
