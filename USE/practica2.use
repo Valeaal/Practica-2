@@ -36,7 +36,6 @@ end
 
 class Estacion
     attributes
-        position : Real
 end
 
 class Tren < ActiveObject
@@ -49,7 +48,6 @@ class Tren < ActiveObject
         movingTime : Real init: 0
         isOutOfOrder : Boolean init: false
         estacionActual : Integer init: 0
-        linea : Linea
     operations     
         move()
         begin
