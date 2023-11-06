@@ -48,7 +48,7 @@ class Tren < ActiveObject
         movingTime : Real init: 0
         isOutOfOrder : Boolean init: false
         estacionActual : Integer init: 0
-    operations     
+    operations   
         move()
         begin
             self.isMoving:=true;
@@ -69,7 +69,18 @@ class Tren < ActiveObject
                 self.movingTime := self.movingTime + self.clock.resolution;
                 if self.movingTime = 120 then
                     self.movingTime := 0;
-                    self.estacionActual := self.estacionActual + 1;
+                    self.estacionActual := self.estacionActual + 1;   
+                    delete(self, self.estacionTren) from llegaAEstacion; 
+                    if(self.direccion=1) then 
+                        insert(self, self.viaIda.segmento.estacionDestino) into llegaAEstacion;
+                        delete(self, self.viaIda) from sentidoIda;
+                        --insert(self, self.estacionTren.estacionSalida.segmentoEstacion.segmento.vias) into sentidoIda;
+                    end;
+                    if(self.direccion=-1) then 
+                        insert(self, self.viaVuelta.segmento.estacionSalida) into llegaAEstacion;
+                        delete(self, self.viaVuelta) from sentidoVuelta;
+                        --insert(self, self.estacionTren.segmentoEstacion.vias) into sentidoVuelta;
+                    end;
                     self.stop();
                 end;
                 if self.isOutOfOrder=true then
@@ -104,24 +115,26 @@ end
 
 class Linea
     attributes
+        estacionInicial : Estacion
+        estacionFinal : Estacion
 end
 
 class Via
 end
-
+-- 
 association sentidoIda between
-    Tren[0..*] role trenIda
-    Via[0..*] role viaIda 
+    Tren[0..1] role trenIda
+    Via[0..1] role viaIda 
 end
 
 association sentidoVuelta between
-    Tren[0..*] role trenVuelta
-    Via[0..*] role viaVuelta
+    Tren[0..1] role trenVuelta
+    Via[0..1] role viaVuelta
 end
 
 association llegaAEstacion between
     Tren[0..*] role trenEstacion
-    Estacion[0..*] role estacionTren
+    Estacion[0..1] role estacionTren
 end
 
 association trenPerteneceALinea between

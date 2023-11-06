@@ -45,3 +45,15 @@
 !insert (segmentoEstacion2,Via4) into segmentoTieneDosVias
 !insert (segmentoEstacion1,Via2) into segmentoTieneDosVias
 !insert (segmentoEstacion1,Via1) into segmentoTieneDosVias
+!insert (Tren2,Via1) into sentidoIda
+!Tren1.direccion := - 1
+!insert (Tren1,Via2) into sentidoVuelta
+!Tren3.direccion := - 1
+!insert (Tren3,Via4) into sentidoVuelta
+!insert (Tren4,Via5) into sentidoIda
+!Tren3.direccion := 1
+!insert (Tren3,Via4) into sentidoIda
+!delete (Tren3,Via4) from sentidoVuelta
+!Tren4.direccion := - 1
+!insert (Tren4,Via5) into sentidoVuelta
+!delete (Tren4,Via5) from sentidoIda
