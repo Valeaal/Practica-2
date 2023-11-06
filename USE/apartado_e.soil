@@ -33,4 +33,7 @@
 !insert (Clock1,Tren1) into Time
 !insert (Clock1,Tren3) into Time
 !insert (Clock1,Tren4) into Time
-
+!insert (Tren2,Estacion1) into llegaAEstacion
+!insert (Tren1,Estacion2) into llegaAEstacion
+!insert (Tren3,Estacion3) into llegaAEstacion
+!insert (Tren4,Estacion4) into llegaAEstacion
