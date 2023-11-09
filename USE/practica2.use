@@ -40,14 +40,11 @@ end
 
 class Tren < ActiveObject
     attributes
-        speed : Real init: 5
-        direccion : Real init: 1
-        position : Real init: 0
+        direccion : Real init: 1   
+        stopTime : Integer init: 0
+        movingTime : Integer init: 0
         isMoving : Boolean init: false
-        stopTime : Real init: 0
-        movingTime : Real init: 0
         isOutOfOrder : Boolean init: false
-        estacionActual : Integer init: 0
     operations   
         move()
         begin
@@ -59,27 +56,15 @@ class Tren < ActiveObject
         end
         tick()
         begin
-            if self.estacionActual = self.circulaLinea.segmentoEstacion->size() then
-                self.direccion := self.direccion * -1;
-                self.estacionActual := 0;
-            end;
             -- Los trenes deben tardar 2 min entre estación y estación
             if self.isMoving then 
-                self.position:=self.position + self.speed*self.clock.resolution;
                 self.movingTime := self.movingTime + self.clock.resolution;
                 if self.movingTime = 120 then
                     self.movingTime := 0;
-                    self.estacionActual := self.estacionActual + 1;   
                     delete(self, self.estacionTren) from llegaAEstacion; 
-                    if(self.direccion=1) then 
-                        insert(self, self.viaIda.segmento.estacionDestino) into llegaAEstacion;
-                        delete(self, self.viaIda) from sentidoIda;
-                        --insert(self, self.estacionTren.estacionSalida.segmentoEstacion.segmento.vias) into sentidoIda;
+                    if(self.direccion=1) then
                     end;
                     if(self.direccion=-1) then 
-                        insert(self, self.viaVuelta.segmento.estacionSalida) into llegaAEstacion;
-                        delete(self, self.viaVuelta) from sentidoVuelta;
-                        --insert(self, self.estacionTren.segmentoEstacion.vias) into sentidoVuelta;
                     end;
                     self.stop();
                 end;
@@ -114,9 +99,6 @@ class Tren < ActiveObject
 end
 
 class Linea
-    attributes
-        estacionInicial : Estacion
-        estacionFinal : Estacion
 end
 
 class Via
@@ -142,20 +124,15 @@ association trenPerteneceALinea between
     Linea[1] role circulaLinea
 end
 
-associationclass segmentoEstacion between
-    Estacion [1] role estacionSalida
-    Estacion[1] role estacionDestino
-end
+--aggregation segmentoEstacionLinea between
+--    Linea[1..*] role lineaDelSegmento
+--    segmentoEstacion[0..*] role segmentoEstacion
+--end
 
-aggregation segmentoEstacionLinea between
-    Linea[1..*] role lineaDelSegmento
-    segmentoEstacion[0..*] role segmentoEstacion
-end
-
-composition segmentoTieneDosVias between
-    segmentoEstacion[1] role segmento
-    Via[2] role vias
-end
+--composition segmentoTieneDosVias between
+--    segmentoEstacion[1] role segmento
+--    Via[2] role vias
+--end
 
 
 
@@ -163,8 +140,8 @@ constraints
 
 -- En esta contraint comprobamos que la estacion de salida y la de destino no sean la misma
 
-context segmentoEstacion inv DiferentesEstaciones:
-    self.estacionSalida <> self.estacionDestino
+--context segmentoEstacion inv DiferentesEstaciones:
+--    self.estacionSalida <> self.estacionDestino
 
 -- Comprobaremos que haya como maximo un tren por via en cada sentido
 
@@ -179,14 +156,14 @@ context Linea inv LineasMayorQueCero:
 
 -- Numero de segmentos mayor que cero para cada linea
 
-context Linea inv SegmentosMayorQueCero:
-    Linea.allInstances().segmentoEstacion->size() > 0
+--context Linea inv SegmentosMayorQueCero:
+--    Linea.allInstances().segmentoEstacion->size() > 0
 
 -- El número de estaciones en una línea es mayor o igual que 2 (si una linea tiene un número de segmentos mayor que 0, entendemos que tendrá como mínimo 2 estaciones conectadas
 -- por el segmento, asique la restricción que implementaremos será que si SegmentosMayorQueCero -> relacion Estacion-Estacion no está "vacía")
 
-context Linea inv nEstacionesMayorQueDos:
-    self.segmentoEstacion->size() > 0 implies self.segmentoEstacion->forAll(s | s.estacionDestino->notEmpty() and s.estacionSalida->notEmpty())
+--context Linea inv nEstacionesMayorQueDos:
+--    self.segmentoEstacion->size() > 0 implies self.segmentoEstacion->forAll(s | s.estacionDestino->notEmpty() and s.estacionSalida->notEmpty())
 
 
 
