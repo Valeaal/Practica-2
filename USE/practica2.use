@@ -61,36 +61,36 @@ class Tren < ActiveObject
         tick()
         begin
         --declare segmentoACoger : Segmento;
-        declare nextStation : Estacion;
-        --declare viaAnterior : Via;
-        --viaAnterior := self.viaDelTren;
+        --declare nextStation : Estacion;
+        declare viaAnterior : Via;
+        viaAnterior := self.viaDelTren;
             if (self.isMoving) then
                 self.movingTime := self.movingTime + self.clock.resolution;
                 -- Los trenes deben tardar 2 min entre estación y estación
                 if (self.movingTime) = 120 then
                     self.movingTime := 0;
                     if (self.direccion=1) then
-                        nextStation := self.viaDelTren.estacionVuelta;
+                        --nextStation := self.viaDelTren.estacionVuelta;
                         delete (self,self.estacionDelTren) from trenEstacion;
-                        insert (self,nextStation) into trenEstacion;
+                        insert (self,self.viaDelTren.estacionVuelta) into trenEstacion; --self,nextStation
                         delete (self,self.viaDelTren) from trenVia;
                         if (self.estacionDelTren.isEndOfTheLine) then
                             self.direccion:=self.direccion*-1;
-                            insert (self,self.estacionDelTren.viaVuelta->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
+                            insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                         else
-                            --insert(self, self.lineaDeTren.segmentoDeLinea->collect(s : Segmento | self.estacionDelTren.viaIda.segmentoTieneVia)->any(true).viaPerteneceASegmento->collect(v : Via | self.estacionDelTren.viaIda)->any(true)) into trenVia;
+                            insert(self, self.lineaDeTren.segmentoDeLinea->collect(s : Segmento | self.estacionDelTren.viaIda.segmentoTieneVia)->any(true).viaPerteneceASegmento->select(v|v<>viaAnterior)->asSequence()->last()) into trenVia;
                         end;
                     else
                         if (self.direccion=-1) then
-                            nextStation := self.viaDelTren.estacionIda;
+                            --nextStation := self.viaDelTren.estacionIda;
                             delete (self,self.estacionDelTren) from trenEstacion;
-                            insert (self,nextStation) into trenEstacion;
+                            insert (self,self.viaDelTren.estacionVuelta) into trenEstacion; --self,nextStation
                             delete (self,self.viaDelTren) from trenVia;
                             if (self.estacionDelTren.isEndOfTheLine) then
                                 self.direccion:=self.direccion*-1;
-                                insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia;
+                                insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                             else
-                                --insert (self,self.estacionDelTren.viaVuelta->select(v|v<>viaAnterior)) into trenVia;
+                                insert(self, self.lineaDeTren.segmentoDeLinea->collect(s : Segmento | self.estacionDelTren.viaIda.segmentoTieneVia)->any(true).viaPerteneceASegmento->select(v|v<>viaAnterior and v.segmentoTieneVia<>viaAnterior.segmentoTieneVia)->asSequence()->first()) into trenVia;
                             end;
                         end;
                     end;

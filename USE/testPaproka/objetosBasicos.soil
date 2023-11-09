@@ -31,3 +31,4 @@
 !insert (Tren1,Via1) into trenVia
 !new Clock
 !insert (Clock1,Tren1) into Time
+!insert (Tren1,Estacion1) into trenEstacion
