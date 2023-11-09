@@ -60,6 +60,7 @@ class Tren < ActiveObject
         end
         tick()
         begin
+        --declare segmentoACoger : Segmento;
         declare nextStation : Estacion;
         --declare viaAnterior : Via;
         --viaAnterior := self.viaDelTren;
@@ -77,7 +78,7 @@ class Tren < ActiveObject
                             self.direccion:=self.direccion*-1;
                             insert (self,self.estacionDelTren.viaVuelta->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                         else
-                            insert (self,self.estacionDelTren.viaIda->select(v|v<>viaAnterior)) into trenVia;  --Mirar que sea de la misma linea y coger ese
+                            --insert(self, self.lineaDeTren.segmentoDeLinea->collect(s : Segmento | self.estacionDelTren.viaIda.segmentoTieneVia)->any(true).viaPerteneceASegmento->collect(v : Via | self.estacionDelTren.viaIda)->any(true)) into trenVia;
                         end;
                     else
                         if (self.direccion=-1) then
@@ -89,7 +90,7 @@ class Tren < ActiveObject
                                 self.direccion:=self.direccion*-1;
                                 insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia;
                             else
-                                insert (self,self.estacionDelTren.viaVuelta->select(v|v<>viaAnterior)) into trenVia;
+                                --insert (self,self.estacionDelTren.viaVuelta->select(v|v<>viaAnterior)) into trenVia;
                             end;
                         end;
                     end;
@@ -98,17 +99,13 @@ class Tren < ActiveObject
                         self.reparar();
                     end;
                 end;
-            else
+            else -- Los trenes deben esperar 1 min en las estaciones
                 self.stopTime:=self.stopTime + self.clock.resolution;
                 if self.stopTime = 60 then
                     self.stopTime := 0;
                     self.move();
                 end;
-            end;
-            
-            
-            -- Los trenes deben esperar 1 min en las estaciones
-            
+            end;         
         end
 
         -- Un tren tarda 1 hora en ser reparado
