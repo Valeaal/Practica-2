@@ -36,6 +36,10 @@ end
 
 class Estacion
     attributes
+    aforo : Integer
+    isEndOfTheLine : Boolean derive: 
+        self.viaIda->iterate(viaIda ; suma : Integer = 0 | suma+1) + + self.viaVuelta->iterate(viaVuelta ; suma : Integer = 0 | suma+1) = 2
+        
 end
 
 class Tren < ActiveObject
@@ -56,31 +60,57 @@ class Tren < ActiveObject
         end
         tick()
         begin
-            -- Los trenes deben tardar 2 min entre estación y estación
-            if self.isMoving then 
+        declare nextStation : Estacion;
+        --declare viaAnterior : Via;
+        --viaAnterior := self.viaDelTren;
+            if (self.isMoving) then
                 self.movingTime := self.movingTime + self.clock.resolution;
-                if self.movingTime = 120 then
+                -- Los trenes deben tardar 2 min entre estación y estación
+                if (self.movingTime) = 120 then
                     self.movingTime := 0;
-                    delete(self, self.estacionTren) from llegaAEstacion; 
-                    if(self.direccion=1) then
+                    if (self.direccion=1) then
+                        nextStation := self.viaDelTren.estacionVuelta;
+                        delete (self,self.estacionDelTren) from trenEstacion;
+                        insert (self,nextStation) into trenEstacion;
+                        delete (self,self.viaDelTren) from trenVia;
+                        if (self.estacionDelTren.isEndOfTheLine) then
+                            self.direccion:=self.direccion*-1;
+                            insert (self,self.estacionDelTren.viaVuelta->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
+                        else
+                            insert (self,self.estacionDelTren.viaIda->select(v|v<>viaAnterior)) into trenVia;  --Mirar que sea de la misma linea y coger ese
+                        end;
+                    else
+                        if (self.direccion=-1) then
+                            nextStation := self.viaDelTren.estacionIda;
+                            delete (self,self.estacionDelTren) from trenEstacion;
+                            insert (self,nextStation) into trenEstacion;
+                            delete (self,self.viaDelTren) from trenVia;
+                            if (self.estacionDelTren.isEndOfTheLine) then
+                                self.direccion:=self.direccion*-1;
+                                insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia;
+                            else
+                                insert (self,self.estacionDelTren.viaVuelta->select(v|v<>viaAnterior)) into trenVia;
+                            end;
+                        end;
                     end;
-                    if(self.direccion=-1) then 
+                else
+                    if self.isOutOfOrder=true then
+                        self.reparar();
                     end;
-                    self.stop();
                 end;
-                if self.isOutOfOrder=true then
-                    self.reparar();
-                end;
-            end;
-            -- Los trenes deben esperar 1 min en las estaciones
-            if not self.isMoving then
+            else
                 self.stopTime:=self.stopTime + self.clock.resolution;
                 if self.stopTime = 60 then
                     self.stopTime := 0;
                     self.move();
                 end;
             end;
+            
+            
+            -- Los trenes deben esperar 1 min en las estaciones
+            
         end
+
         -- Un tren tarda 1 hora en ser reparado
         reparar()
         begin
@@ -91,6 +121,7 @@ class Tren < ActiveObject
                 self.move();
             end;
         end
+
         -- Operación para averiar el tren
         averiar()
         begin
@@ -102,40 +133,50 @@ class Linea
 end
 
 class Via
+    attributes
+    ocupado : Boolean derive: self.trenEnVia <> null
+end
+
+class Segmento
 end
 -- 
-association sentidoIda between
-    Tren[0..1] role trenIda
-    Via[0..1] role viaIda 
+association trenVia between
+Tren[0..1] role trenEnVia
+Via[0..1] role viaDelTren
 end
 
-association sentidoVuelta between
-    Tren[0..1] role trenVuelta
-    Via[0..1] role viaVuelta
+association trenEstacion between
+Tren[0..*] role trenEnEstacion
+Estacion[0..1] role estacionDelTren
 end
 
-association llegaAEstacion between
-    Tren[0..*] role trenEstacion
-    Estacion[0..1] role estacionTren
+association trenLinea between
+Tren[0..*] role trenDeLinea
+Linea[0..1] role lineaDeTren
 end
 
-association trenPerteneceALinea between
-    Tren[0..*] role trenDeLinea
-    Linea[1] role circulaLinea
+aggregation segmentoPerteneceALinea between
+Linea[1..*] role lineaDelSegmento
+Segmento[1..*] role segmentoDeLinea
 end
 
---aggregation segmentoEstacionLinea between
---    Linea[1..*] role lineaDelSegmento
---    segmentoEstacion[0..*] role segmentoEstacion
---end
+composition viasDelSegmento between
+Segmento[1] role segmentoTieneVia
+Via[2] role viaPerteneceASegmento
+end
 
---composition segmentoTieneDosVias between
---    segmentoEstacion[1] role segmento
---    Via[2] role vias
---end
+association estacionViaIda between
+Estacion[1] role estacionIda
+Via[1..*] role viaIda
+end
+
+association estacionViaVuelta between
+Estacion[1] role estacionVuelta
+Via[1..*] role viaVuelta
+end
 
 
-
+--
 constraints
 
 -- En esta contraint comprobamos que la estacion de salida y la de destino no sean la misma
@@ -145,9 +186,9 @@ constraints
 
 -- Comprobaremos que haya como maximo un tren por via en cada sentido
 
-context Via inv UnTrenPorVia:
-    Via.allInstances()->forAll(vias | vias.trenIda->size() <= 1) and
-    Via.allInstances()->forAll(vias | vias.trenVuelta->size() <= 1)
+--context Via inv UnTrenPorVia:
+    --Via.allInstances()->forAll(vias | vias.trenIda->size() <= 1) and
+    --Via.allInstances()->forAll(vias | vias.trenVuelta->size() <= 1)
 
 -- Numero de lineas mayor que cero
 
