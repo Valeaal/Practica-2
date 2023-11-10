@@ -2,7 +2,7 @@ model Practica2
 
 -- Reloj para apartado C --
 
-class Clock 
+class Clock --¡Está buggy, revisar!
   attributes
     NOW : Integer init = 0
     resolution: Integer init = 1 
@@ -70,7 +70,6 @@ class Tren < ActiveObject
                 if (self.movingTime) = 120 then
                     self.movingTime := 0;
                     if (self.direccion=1) then
-                        --nextStation := self.viaDelTren.estacionVuelta;
                         delete (self,self.estacionDelTren) from trenEstacion;
                         insert (self,self.viaDelTren.estacionVuelta) into trenEstacion; --self,nextStation
                         delete (self,self.viaDelTren) from trenVia;
@@ -78,11 +77,10 @@ class Tren < ActiveObject
                             self.direccion:=self.direccion*-1;
                             insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                         else
-                            insert(self, self.lineaDeTren.segmentoDeLinea->collect(s : Segmento | self.estacionDelTren.viaIda.segmentoTieneVia)->any(true).viaPerteneceASegmento->select(v|v<>viaAnterior)->asSequence()->last()) into trenVia;
+                            insert(self, self.estacionDelTren.viaIda->select(v|v<>viaAnterior)->asSequence()->last()) into trenVia;
                         end;
                     else
                         if (self.direccion=-1) then
-                            --nextStation := self.viaDelTren.estacionIda;
                             delete (self,self.estacionDelTren) from trenEstacion;
                             insert (self,self.viaDelTren.estacionVuelta) into trenEstacion; --self,nextStation
                             delete (self,self.viaDelTren) from trenVia;
@@ -90,22 +88,24 @@ class Tren < ActiveObject
                                 self.direccion:=self.direccion*-1;
                                 insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                             else
-                                insert(self, self.lineaDeTren.segmentoDeLinea->collect(s : Segmento | self.estacionDelTren.viaIda.segmentoTieneVia)->any(true).viaPerteneceASegmento->select(v|v<>viaAnterior and v.segmentoTieneVia<>viaAnterior.segmentoTieneVia)->asSequence()->first()) into trenVia;
+                                insert(self, viaAnterior.estacionVuelta.viaIda->select(v|v<>viaAnterior.segmentoTieneVia.viaPerteneceASegmento->select(viaAux|
+                                    viaAux<>viaAnterior)->asSequence()->first())->asSequence()->first()) into trenVia;
                             end;
                         end;
                     end;
-                else
-                    if self.isOutOfOrder=true then
-                        self.reparar();
-                    end;
                 end;
-            else -- Los trenes deben esperar 1 min en las estaciones
+                if self.isOutOfOrder=true then
+                        self.reparar();       
+                end;
+            end;
+            -- Los trenes deben esperar 1 min en las estaciones
+            if (self.isMoving=false) then
                 self.stopTime:=self.stopTime + self.clock.resolution;
                 if self.stopTime = 60 then
                     self.stopTime := 0;
                     self.move();
                 end;
-            end;         
+            end;        
         end
 
         -- Un tren tarda 1 hora en ser reparado
