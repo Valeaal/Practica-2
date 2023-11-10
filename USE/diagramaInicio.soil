@@ -91,17 +91,106 @@
 !insert (Linea3,Segmento4) into segmentoPerteneceALinea
 !insert (Linea3,Segmento6) into segmentoPerteneceALinea
 !insert (Linea3,Segmento8) into segmentoPerteneceALinea
+!new Tren
+!insert (Tren1,Linea1) into trenLinea
+!insert (Tren1,Estacion1) into trenEstacion
+!new Tren
+!insert (Tren2,Linea1) into trenLinea
+!insert (Tren2,Estacion7) into trenEstacion
+!new Tren
+!insert (Tren3,Linea2) into trenLinea
+!insert (Tren3,Estacion1) into trenEstacion
+!new Tren
+!insert (Tren4,Linea2) into trenLinea
+!insert (Tren4,Estacion5) into trenEstacion
+!new Tren
+!insert (Tren5,Estacion1) into trenEstacion
+!insert (Tren5,Linea3) into trenLinea
+!new Tren
+!insert (Tren6,Estacion5) into trenEstacion
+!insert (Tren6,Linea3) into trenLinea
+!new Clock
+!insert (Clock1,Tren1) into Time
+!insert (Clock1,Tren5) into Time
+!insert (Clock1,Tren6) into Time
+!insert (Clock1,Tren4) into Time
+!insert (Clock1,Tren2) into Time
+!insert (Clock1,Tren3) into Time
+!Clock1.run(20)
+!insert (Tren1,Via1) into trenVia
+!insert (Tren2,Via6) into trenVia
+!insert (Tren5,Via11) into trenVia
+!insert (Tren4,Via9) into trenVia
+!insert (Tren6,Via10) into trenVia
+!insert (Tren3,Via7) into trenVia
 !destroy Segmento7; destroy Via7; destroy Via8
+!insert (Tren3,Via1) into trenVia
+!delete (Tren6,Via10) from trenVia
+!insert (Tren6,Via9) into trenVia
+!delete (Tren4,Via9) from trenVia
+!delete (Tren6,Via9) from trenVia
+!insert (Tren6,Via10) into trenVia
+!insert (Tren4,Via10) into trenVia
 !delete (Linea3,Segmento8) from segmentoPerteneceALinea
 !new Via
-!new Via
 !new Segmento
-!insert (Estacion4,Via17) into estacionViaIda
-!insert (Estacion5,Via17) into estacionViaIda
-!insert (Estacion4,Via18) into estacionViaVuelta
+!new Via
+!insert (Estacion4,Via18) into estacionViaIda
+!insert (Estacion4,Via17) into estacionViaVuelta
 !insert (Estacion5,Via18) into estacionViaIda
+!insert (Estacion5,Via17) into estacionViaVuelta
+!insert (Segmento9,Via18) into viasDelSegmento
+!insert (Segmento9,Via17) into viasDelSegmento
+!insert (Linea3,Segmento9) into segmentoPerteneceALinea
+!delete (Tren6,Via10) from trenVia
+!insert (Tren6,Via17) into trenVia
+!delete (Estacion1,Via1) from estacionViaIda
+!insert (Estacion1,Via1) into estacionViaVuelta
+!delete (Estacion1,Via2) from estacionViaVuelta
+!insert (Estacion1,Via2) into estacionViaIda
+!delete (Estacion1,Via1) from estacionViaVuelta
+!insert (Estacion1,Via1) into estacionViaIda
+!delete (Estacion2,Via1) from estacionViaIda
+!insert (Estacion2,Via1) into estacionViaVuelta
+!delete (Estacion1,Via2) from estacionViaIda
+!insert (Estacion1,Via2) into estacionViaVuelta
+!delete (Estacion2,Via2) from estacionViaVuelta
+!insert (Estacion2,Via2) into estacionViaIda
+!delete (Estacion6,Via3) from estacionViaIda
+!insert (Estacion6,Via3) into estacionViaVuelta
+!delete (Estacion6,Via4) from estacionViaVuelta
+!insert (Estacion6,Via4) into estacionViaIda
+!delete (Estacion7,Via5) from estacionViaIda
+!insert (Estacion7,Via5) into estacionViaVuelta
+!delete (Estacion6,Via6) from estacionViaIda
+!insert (Estacion6,Via6) into estacionViaVuelta
+!delete (Estacion7,Via6) from estacionViaVuelta
+!insert (Estacion7,Via6) into estacionViaIda
+!delete (Estacion4,Via13) from estacionViaIda
+!insert (Estacion4,Via13) into estacionViaVuelta
+!delete (Estacion4,Via14) from estacionViaVuelta
+!insert (Estacion4,Via14) into estacionViaIda
+!delete (Estacion5,Via9) from estacionViaIda
+!insert (Estacion5,Via9) into estacionViaVuelta
+!delete (Estacion5,Via10) from estacionViaVuelta
+!insert (Estacion5,Via10) into estacionViaIda
 !delete (Estacion5,Via18) from estacionViaIda
 !insert (Estacion5,Via18) into estacionViaVuelta
-!insert (Segmento9,Via17) into viasDelSegmento
-!insert (Segmento9,Via18) into viasDelSegmento
-!insert (Linea3,Segmento9) into segmentoPerteneceALinea
+!delete (Estacion5,Via17) from estacionViaVuelta
+!insert (Estacion5,Via17) into estacionViaIda
+!delete (Estacion3,Via11) from estacionViaIda
+!insert (Estacion3,Via11) into estacionViaVuelta
+!delete (Estacion3,Via12) from estacionViaVuelta
+!insert (Estacion3,Via12) into estacionViaIda
+!delete (Estacion4,Via15) from estacionViaIda
+!insert (Estacion4,Via15) into estacionViaVuelta
+!delete (Estacion4,Via16) from estacionViaVuelta
+!insert (Estacion4,Via16) into estacionViaIda
+!delete (Tren3,Via1) from trenVia
+!destroy Tren1
+!destroy Tren5
+!destroy Tren3
+!destroy Tren2
+!destroy Tren6
+!destroy Tren4
+!destroy Clock1
