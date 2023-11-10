@@ -91,3 +91,43 @@
 !insert (Linea3,Segmento4) into segmentoPerteneceALinea
 !insert (Linea3,Segmento6) into segmentoPerteneceALinea
 !insert (Linea3,Segmento8) into segmentoPerteneceALinea
+!new Tren
+!insert (Tren1,Linea1) into trenLinea
+!insert (Tren1,Estacion1) into trenEstacion
+!new Tren
+!insert (Tren2,Linea1) into trenLinea
+!insert (Tren2,Estacion7) into trenEstacion
+!new Tren
+!insert (Tren3,Linea2) into trenLinea
+!insert (Tren3,Estacion1) into trenEstacion
+!new Tren
+!insert (Tren4,Linea2) into trenLinea
+!insert (Tren4,Estacion5) into trenEstacion
+!new Tren
+!insert (Tren5,Estacion1) into trenEstacion
+!insert (Tren5,Linea3) into trenLinea
+!new Tren
+!insert (Tren6,Estacion5) into trenEstacion
+!insert (Tren6,Linea3) into trenLinea
+!new Clock
+!insert (Clock1,Tren1) into Time
+!insert (Clock1,Tren5) into Time
+!insert (Clock1,Tren6) into Time
+!insert (Clock1,Tren4) into Time
+!insert (Clock1,Tren2) into Time
+!insert (Clock1,Tren3) into Time
+!Clock1.run(20)
+!insert (Tren1,Via1) into trenVia
+!insert (Tren2,Via6) into trenVia
+!insert (Tren5,Via11) into trenVia
+!insert (Tren4,Via9) into trenVia
+!insert (Tren6,Via10) into trenVia
+!insert (Tren3,Via7) into trenVia
+!destroy Segmento7; destroy Via7; destroy Via8
+!insert (Tren3,Via1) into trenVia
+!delete (Tren6,Via10) from trenVia
+!insert (Tren6,Via9) into trenVia
+!delete (Tren4,Via9) from trenVia
+!delete (Tren6,Via9) from trenVia
+!insert (Tren6,Via10) into trenVia
+!insert (Tren4,Via10) into trenVia
