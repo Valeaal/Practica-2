@@ -92,3 +92,16 @@
 !insert (Linea3,Segmento6) into segmentoPerteneceALinea
 !insert (Linea3,Segmento8) into segmentoPerteneceALinea
 !destroy Segmento7; destroy Via7; destroy Via8
+!delete (Linea3,Segmento8) from segmentoPerteneceALinea
+!new Via
+!new Via
+!new Segmento
+!insert (Estacion4,Via17) into estacionViaIda
+!insert (Estacion5,Via17) into estacionViaIda
+!insert (Estacion4,Via18) into estacionViaVuelta
+!insert (Estacion5,Via18) into estacionViaIda
+!delete (Estacion5,Via18) from estacionViaIda
+!insert (Estacion5,Via18) into estacionViaVuelta
+!insert (Segmento9,Via17) into viasDelSegmento
+!insert (Segmento9,Via18) into viasDelSegmento
+!insert (Linea3,Segmento9) into segmentoPerteneceALinea

@@ -131,3 +131,16 @@
 !delete (Tren6,Via9) from trenVia
 !insert (Tren6,Via10) into trenVia
 !insert (Tren4,Via10) into trenVia
+!delete (Linea3,Segmento8) from segmentoPerteneceALinea
+!new Via
+!new Segmento
+!new Via
+!insert (Estacion4,Via18) into estacionViaIda
+!insert (Estacion4,Via17) into estacionViaVuelta
+!insert (Estacion5,Via18) into estacionViaIda
+!insert (Estacion5,Via17) into estacionViaVuelta
+!insert (Segmento9,Via18) into viasDelSegmento
+!insert (Segmento9,Via17) into viasDelSegmento
+!insert (Linea3,Segmento9) into segmentoPerteneceALinea
+!delete (Tren6,Via10) from trenVia
+!insert (Tren6,Via17) into trenVia
