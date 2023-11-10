@@ -45,8 +45,9 @@ end
 class Tren < ActiveObject
     attributes
         direccion : Real init: 1   
-        stopTime : Integer init: 0
-        movingTime : Integer init: 0
+        --stopTime : Integer init: 0
+        --movingTime : Integer init: 0
+        time : Integer init : 0
         isMoving : Boolean init: false
         isOutOfOrder : Boolean init: false
     operations   
@@ -68,10 +69,10 @@ class Tren < ActiveObject
         declare viaAnterior : Via;
         viaAnterior := self.viaDelTren;
             if (self.isMoving) then
-                self.movingTime := self.movingTime + self.clock.resolution;
+                self.time := self.time + self.clock.resolution;
                 -- Los trenes deben tardar 2 min entre estación y estación
-                if (self.movingTime) = 120 then
-                    self.movingTime := 0;
+                if (self.time) = 180 then
+                    self.time := 0;
                     if (self.direccion=1) then
                         delete (self,self.estacionDelTren) from trenEstacion;
                         insert (self,self.viaDelTren.estacionVuelta) into trenEstacion; --self,nextStation
@@ -103,9 +104,8 @@ class Tren < ActiveObject
             end;
             -- Los trenes deben esperar 1 min en las estaciones
             if (self.isMoving=false) then
-                self.stopTime:=self.stopTime + self.clock.resolution;
-                if self.stopTime = 60 then
-                    self.stopTime := 0;
+                self.time:=self.time + self.clock.resolution;
+                if self.time = 60 then
                     self.move();
                 end;
             end;        
@@ -114,10 +114,10 @@ class Tren < ActiveObject
         -- Un tren tarda 1 hora en ser reparado
         reparar()
         begin
-            self.stopTime:=self.stopTime + self.clock.resolution;
-            if self.stopTime = 3600 then
+            self.time:=self.time + self.clock.resolution;
+            if self.time = 3600 then
                 self.isOutOfOrder := false;
-                self.stopTime := 0;
+                self.time := 0;
                 self.move();
             end;
         end
