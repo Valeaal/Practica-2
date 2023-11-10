@@ -187,3 +187,10 @@
 !delete (Estacion4,Via16) from estacionViaVuelta
 !insert (Estacion4,Via16) into estacionViaIda
 !delete (Tren3,Via1) from trenVia
+!Clock1.NOW := 0
+!Tren1.time := 0
+!Tren2.time := 0
+!Tren3.time := 0
+!Tren4.time := 0
+!Tren5.time := 0
+!Tren6.time := 0
