@@ -38,7 +38,7 @@ class Estacion
     attributes
     aforo : Integer
     isEndOfTheLine : Boolean derive: 
-        self.viaIda->iterate(viaIda ; suma : Integer = 0 | suma+1) + + self.viaVuelta->iterate(viaVuelta ; suma : Integer = 0 | suma+1) = 2
+        self.viaIda->iterate(viaIda ; suma : Integer = 0 | suma+1) + self.viaVuelta->iterate(viaVuelta ; suma : Integer = 0 | suma+1) = 2
         
 end
 
@@ -54,14 +54,17 @@ class Tren < ActiveObject
         begin
             self.isMoving:=true;
         end
+        
         stop()
         begin
             self.isMoving:=false;
         end
+
+        checkViaEnLinea(v : Via):
+        Boolean = v.segmentoTieneVia.lineaDelSegmento->exists(m|m=self.lineaDeTren) -- Para ahorrar codigo
+
         tick()
         begin
-        --declare segmentoACoger : Segmento;
-        --declare nextStation : Estacion;
         declare viaAnterior : Via;
         viaAnterior := self.viaDelTren;
             if (self.isMoving) then
@@ -77,7 +80,7 @@ class Tren < ActiveObject
                             self.direccion:=self.direccion*-1;
                             insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                         else
-                            insert(self, self.estacionDelTren.viaIda->select(v|v<>viaAnterior)->asSequence()->last()) into trenVia;
+                            insert(self, self.estacionDelTren.viaIda->select(v|v<>viaAnterior and self.checkViaEnLinea(v))->asSequence()->last()) into trenVia;
                         end;
                     else
                         if (self.direccion=-1) then
@@ -89,7 +92,7 @@ class Tren < ActiveObject
                                 insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                             else
                                 insert(self, viaAnterior.estacionVuelta.viaIda->select(v|v<>viaAnterior.segmentoTieneVia.viaPerteneceASegmento->select(viaAux|
-                                    viaAux<>viaAnterior)->asSequence()->first())->asSequence()->first()) into trenVia;
+                                    viaAux<>viaAnterior)->asSequence()->first() and self.checkViaEnLinea(v))->asSequence()->first()) into trenVia;
                             end;
                         end;
                     end;
@@ -175,33 +178,25 @@ end
 
 --
 constraints
+-- Un segmento debe de estar compuesto por dos vias
+context Segmento inv segmentoTieneDosVias:
+    self.viaPerteneceASegmento->iterate(vias ; sum : Integer = 0 | sum+1) = 2
 
--- En esta contraint comprobamos que la estacion de salida y la de destino no sean la misma
-
---context segmentoEstacion inv DiferentesEstaciones:
---    self.estacionSalida <> self.estacionDestino
-
--- Comprobaremos que haya como maximo un tren por via en cada sentido
-
---context Via inv UnTrenPorVia:
-    --Via.allInstances()->forAll(vias | vias.trenIda->size() <= 1) and
-    --Via.allInstances()->forAll(vias | vias.trenVuelta->size() <= 1)
+-- Un tren no puede usar una via ocupada
+--context Tren inv trenNoPuedeUsarUnaViaOcupada:
+    --self.viaDelTren.ocupada -> no se como implementarlo, ya que si esto es false, al ocupar la via vacia el mismo tren hará que la invariante no rule
 
 -- Numero de lineas mayor que cero
-
-context Linea inv LineasMayorQueCero:
+context Linea inv lineasMayorQueCero:
     Linea.allInstances()->size() > 0
 
--- Numero de segmentos mayor que cero para cada linea
+-- Todas las lineas deben de tener al menos un segmento asociado
+context Linea inv lineasTienenAlMenosUnSegmentoAsociado:
+    Linea.allInstances().segmentoDeLinea <> null
 
---context Linea inv SegmentosMayorQueCero:
---    Linea.allInstances().segmentoEstacion->size() > 0
-
--- El número de estaciones en una línea es mayor o igual que 2 (si una linea tiene un número de segmentos mayor que 0, entendemos que tendrá como mínimo 2 estaciones conectadas
--- por el segmento, asique la restricción que implementaremos será que si SegmentosMayorQueCero -> relacion Estacion-Estacion no está "vacía")
-
---context Linea inv nEstacionesMayorQueDos:
---    self.segmentoEstacion->size() > 0 implies self.segmentoEstacion->forAll(s | s.estacionDestino->notEmpty() and s.estacionSalida->notEmpty())
+-- Las estaciones tienen un numero par de vias
+context Estacion inv estacionTieneNumeroParDeVias:
+    (self.viaVuelta->iterate(vias ; sum : Integer = 0 | sum+1) + self.viaIda->iterate(vias ; sum : Integer = 0 | sum+1)).mod(2) = 0
 
 
 
