@@ -2,7 +2,7 @@ model Practica2
 
 -- Reloj para apartado C --
 
-class Clock --¡Está buggy, revisar!
+class Clock
   attributes
     NOW : Integer init = 0
     resolution: Integer init = 1 
@@ -36,7 +36,6 @@ end
 
 class Estacion
     attributes
-    aforo : Integer
     isEndOfTheLine : Boolean derive: 
         self.viaIda->iterate(viaIda ; suma : Integer = 0 | suma+1) + self.viaVuelta->iterate(viaVuelta ; suma : Integer = 0 | suma+1) = 2
         
@@ -45,8 +44,6 @@ end
 class Tren < ActiveObject
     attributes
         direccion : Real init: 1   
-        --stopTime : Integer init: 0
-        --movingTime : Integer init: 0
         time : Integer init : 0
         espera : Integer init : 0
         isMoving : Boolean init: false
@@ -69,46 +66,45 @@ class Tren < ActiveObject
         begin
             if (self.isMoving) then
                 self.irAEstacion();
-                if self.isOutOfOrder=true then
-                    self.reparar();       
-                end;
             end;
             
             if (self.isMoving=false) then
                 self.esperaEstacion();
             end;        
         end
-        -- Los trenes deben tardar 2 min entre estación y estación
+        -- Operación para buscar la próxima vía a coger. Además los trenes deben tardar 2 min entre estación y estación
         irAEstacion()
         begin
-            declare viaAnterior : Via;
-            viaAnterior := self.viaDelTren;
-            self.time := self.time + self.clock.resolution;
-                
-            if (self.time) = 180 then
-                self.time := 0;
-                if(self.viaDelTren <> null) then
-                    delete (self,self.estacionDelTren) from trenEstacion;
-                    insert (self,self.viaDelTren.estacionVuelta) into trenEstacion; --self,nextStation
-                    delete (self,self.viaDelTren) from trenVia;
-                end;
-
-                if (self.estacionDelTren.isEndOfTheLine) then
-                    self.direccion:=self.direccion*-1;
-                    if(not self.estacionDelTren.viaIda->asSequence()->first().viaOcupada) then
-                        insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
+            if not self.isOutOfOrder then
+                declare viaAnterior : Via;
+                viaAnterior := self.viaDelTren;
+                self.time := self.time + self.clock.resolution;
+                    
+                if (self.time) = 180 then
+                    self.time := 0;
+                    if(self.viaDelTren <> null) then
+                        delete (self,self.estacionDelTren) from trenEstacion;
+                        insert (self,self.viaDelTren.estacionVuelta) into trenEstacion; --self,nextStation
+                        delete (self,self.viaDelTren) from trenVia;
                     end;
-                else
-                    if (self.direccion=1) then                       
-                        if(not self.estacionDelTren.viaIda->select(v|v<>viaAnterior and self.checkViaEnLinea(v))->asSequence()->last().viaOcupada) then
-                            insert(self, self.estacionDelTren.viaIda->select(v|v<>viaAnterior and self.checkViaEnLinea(v))->asSequence()->last()) into trenVia;
+
+                    if (self.estacionDelTren.isEndOfTheLine) then
+                        self.direccion:=self.direccion*-1;
+                        if(not self.estacionDelTren.viaIda->asSequence()->first().viaOcupada) then
+                            insert (self,self.estacionDelTren.viaIda->asSequence()->first()) into trenVia; --no va a tener mas xq es fin de linea, pero USE lo coge como un Set de 1 elemento
                         end;
                     else
-                        if (self.direccion=-1) then
-                            if(not viaAnterior.estacionVuelta.viaIda->select(v|v<>viaAnterior.segmentoTieneVia.viaPerteneceASegmento->select(viaAux|
-                            viaAux<>viaAnterior)->asSequence()->first() and self.checkViaEnLinea(v))->asSequence()->first().viaOcupada) then
-                                insert(self, viaAnterior.estacionVuelta.viaIda->select(v|v<>viaAnterior.segmentoTieneVia.viaPerteneceASegmento->select(viaAux|
-                                viaAux<>viaAnterior)->asSequence()->first() and self.checkViaEnLinea(v))->asSequence()->first()) into trenVia;
+                        if (self.direccion=1) then                       
+                            if(not self.estacionDelTren.viaIda->select(v|v<>viaAnterior and self.checkViaEnLinea(v))->asSequence()->last().viaOcupada) then
+                                insert(self, self.estacionDelTren.viaIda->select(v|v<>viaAnterior and self.checkViaEnLinea(v))->asSequence()->last()) into trenVia;
+                            end;
+                        else
+                            if (self.direccion=-1) then
+                                if(not viaAnterior.estacionVuelta.viaIda->select(v|v<>viaAnterior.segmentoTieneVia.viaPerteneceASegmento->select(viaAux|
+                                viaAux<>viaAnterior)->asSequence()->first() and self.checkViaEnLinea(v))->asSequence()->first().viaOcupada) then
+                                    insert(self, viaAnterior.estacionVuelta.viaIda->select(v|v<>viaAnterior.segmentoTieneVia.viaPerteneceASegmento->select(viaAux|
+                                    viaAux<>viaAnterior)->asSequence()->first() and self.checkViaEnLinea(v))->asSequence()->first()) into trenVia;
+                                end;
                             end;
                         end;
                     end;
@@ -125,16 +121,12 @@ class Tren < ActiveObject
             end;
         end
 
-        -- Un tren tarda 1 hora en ser reparado
+        -- Operación para reparar el tren
         reparar()
         begin
-            self.time:=self.time + self.clock.resolution;
-            if self.time = 720 then
-                self.isOutOfOrder := false;
-                self.time := 0;
-                self.move();
-            end;
+            self.isOutOfOrder := false;
         end
+        pre outOfOrder : self.isOutOfOrder
 
         -- Operación para averiar el tren
         averiar()
@@ -196,10 +188,6 @@ constraints
 -- Un segmento debe de estar compuesto por dos vias
 context Segmento inv segmentoTieneDosVias:
     self.viaPerteneceASegmento->iterate(vias ; sum : Integer = 0 | sum+1) = 2
-
--- Un tren no puede usar una via ocupada
---context Tren inv trenNoPuedeUsarUnaViaOcupada:
---    self.viaDelTren.trenEnVia <= 1
 
 -- Numero de lineas mayor que cero
 context Linea inv lineasMayorQueCero:
