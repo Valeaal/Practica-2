@@ -134,6 +134,33 @@ class Tren < ActiveObject
             self.isOutOfOrder := true;
         end
         pre notOutOfOrder: not self.isOutOfOrder
+
+        statemachines
+        psm TrenFuncionando
+            states
+                s : initial
+                EstarEnEstacion
+                CirculandoEnVia
+                Stopped
+            transitions
+                s->EstarEnEstacion
+                EstarEnEstacion->Stopped { [self.isOutOfOrder or self.viaDelTren.viaOcupada] stop()}
+                Stopped->CirculandoEnVia { [not self.isOutOfOrder and self.isMoving and not self.viaDelTren.viaOcupada] move()}
+                CirculandoEnVia->EstarEnEstacion { [not self.isOutOfOrder and not self.isMoving and self.viaDelTren.viaOcupada and self.estacionDelTren->size() = 0] stop()}
+                EstarEnEstacion->EstarEnEstacion { [self.isOutOfOrder] stop()}
+        end
+        
+        psm TrenAveriado
+            states
+                s : initial
+                Averiado
+                TrenFuncional
+            transitions
+                s->TrenFuncional
+                TrenFuncional->Averiado { [not self.isOutOfOrder] averiar()}
+                Averiado->Averiado { [self.isOutOfOrder] stop() }
+                Averiado->TrenFuncional { [self.isOutOfOrder] reparar() }
+        end
 end
 
 class Linea

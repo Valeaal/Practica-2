@@ -145,6 +145,30 @@
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xjiQA4CHEe6LgoB6Mq18aw" value="1"/>
     </ownedEnd>
   </packagedElement>
+  <packagedElement xmi:type="uml:StateMachine" xmi:id="_u63k0ICsEe6KEZD103BMOQ" name="StateMachine18">
+    <region xmi:type="uml:Region" xmi:id="_vMzpYICsEe6KEZD103BMOQ" name="Region1">
+      <transition xmi:type="uml:Transition" xmi:id="_dfH0wICuEe6KEZD103BMOQ" name="/" source="_EW9S8ICtEe6KEZD103BMOQ" target="_G211wICtEe6KEZD103BMOQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="_7sU9wICvEe6KEZD103BMOQ" name="stop[self.isOutOfOrder and self.viaDelTren.viaOcupada]" source="_G211wICtEe6KEZD103BMOQ" target="_G211wICtEe6KEZD103BMOQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="_yoiMkICwEe6KEZD103BMOQ" name="stop[self.isOutOfOrder]" source="_G211wICtEe6KEZD103BMOQ" target="_IZJWAICtEe6KEZD103BMOQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="_2zB3EICwEe6KEZD103BMOQ" name="move[not self.isOutOfOrder and not selt.viaDelTren.viaOcupada and self.isMoving]" source="_IZJWAICtEe6KEZD103BMOQ" target="_B_FAIICuEe6KEZD103BMOQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="__3orIICwEe6KEZD103BMOQ" name="stop[not self.isOutOfOrder and not self.isMoving and self.viaDelTren.viaOcupada and self.estacionDelTren->size() = 0]" source="_B_FAIICuEe6KEZD103BMOQ" target="_G211wICtEe6KEZD103BMOQ"/>
+      <subvertex xmi:type="uml:Pseudostate" xmi:id="_EW9S8ICtEe6KEZD103BMOQ" name="s"/>
+      <subvertex xmi:type="uml:State" xmi:id="_G211wICtEe6KEZD103BMOQ" name="EstarEnEstacion"/>
+      <subvertex xmi:type="uml:State" xmi:id="_IZJWAICtEe6KEZD103BMOQ" name="Stopped"/>
+      <subvertex xmi:type="uml:State" xmi:id="_B_FAIICuEe6KEZD103BMOQ" name="CirculandoEnVia"/>
+    </region>
+  </packagedElement>
+  <packagedElement xmi:type="uml:StateMachine" xmi:id="_ZYpnQICxEe6KEZD103BMOQ" name="TrenAveriadoStateMachine">
+    <region xmi:type="uml:Region" xmi:id="_aR5jcICxEe6KEZD103BMOQ" name="Region1">
+      <transition xmi:type="uml:Transition" xmi:id="__vklMIC5Ee6KEZD103BMOQ" name="/" source="_estBMIC5Ee6KEZD103BMOQ" target="_9WM6EIC5Ee6KEZD103BMOQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="_HdeFAIC6Ee6KEZD103BMOQ" name="averiar [not self.isOutOfOrder] " source="_9WM6EIC5Ee6KEZD103BMOQ" target="_Eq1lUIC6Ee6KEZD103BMOQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="_Ng5nEIC6Ee6KEZD103BMOQ" name="stop [self.isOutOfOrder]" source="_Eq1lUIC6Ee6KEZD103BMOQ" target="_Eq1lUIC6Ee6KEZD103BMOQ"/>
+      <transition xmi:type="uml:Transition" xmi:id="_VZHggIC6Ee6KEZD103BMOQ" name="reparar [self.isOutOfOrder]" source="_Eq1lUIC6Ee6KEZD103BMOQ" target="_9WM6EIC5Ee6KEZD103BMOQ"/>
+      <subvertex xmi:type="uml:Pseudostate" xmi:id="_estBMIC5Ee6KEZD103BMOQ" name="s"/>
+      <subvertex xmi:type="uml:State" xmi:id="_9WM6EIC5Ee6KEZD103BMOQ" name="TrenFuncional"/>
+      <subvertex xmi:type="uml:State" xmi:id="_Eq1lUIC6Ee6KEZD103BMOQ" name="Averiado"/>
+    </region>
+  </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_Q2mdMHtMEe694uZ4xJqXfA">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Q2sj0HtMEe694uZ4xJqXfA" source="http://www.eclipse.org/uml2/2.0.0/UML">
       <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
