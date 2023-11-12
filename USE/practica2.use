@@ -145,8 +145,9 @@ class Tren < ActiveObject
             transitions
                 s->EstarEnEstacion
                 EstarEnEstacion->Stopped { [self.isOutOfOrder or self.viaDelTren.viaOcupada] stop()}
-                Stopped->CirculandoEnVia { [not self.isOutOfOrder and self.isMoving and not self.viaDelTren.viaOcupada] move()}
-                CirculandoEnVia->EstarEnEstacion { [not self.isOutOfOrder and not self.isMoving and self.viaDelTren.viaOcupada and self.estacionDelTren->size() = 0] stop()}
+                Stopped->CirculandoEnVia { [not self.isOutOfOrder and self.isMoving] move()}
+                EstarEnEstacion->CirculandoEnVia {[not self.isOutOfOrder and not self.isMoving] move()} 
+                CirculandoEnVia->EstarEnEstacion { [not self.isOutOfOrder and self.isMoving and self.viaDelTren.viaOcupada and self.estacionDelTren->size() = 0] stop()}
                 EstarEnEstacion->EstarEnEstacion { [self.isOutOfOrder] stop()}
         end
         
