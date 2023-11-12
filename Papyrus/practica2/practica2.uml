@@ -5,28 +5,19 @@
   </packageImport>
   <packagedElement xmi:type="uml:Class" xmi:id="_hQFTcHZyEe6OQJwjluSPuA" name="Tren">
     <generalization xmi:type="uml:Generalization" xmi:id="_54ZUEICFEe6LgoB6Mq18aw" general="_UGjfgICFEe6LgoB6Mq18aw"/>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_GuioEHtMEe694uZ4xJqXfA" name="speed">
-      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
-    </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_PTrR4HtMEe694uZ4xJqXfA" name="direccion">
-      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_TYJM4HtMEe694uZ4xJqXfA" name="position">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
     </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_Xj734HtMEe694uZ4xJqXfA" name="isMoving">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
     </ownedAttribute>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_xd2cMHtMEe694uZ4xJqXfA" name="stopTime">
-      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_0yyXsHtMEe694uZ4xJqXfA" name="movingTime">
-      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
-    </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_3aRXUHtMEe694uZ4xJqXfA" name="isOutOfOrder">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
     </ownedAttribute>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_8iGMwHtMEe694uZ4xJqXfA" name="estacionActual">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_lqUxcID3Ee6oVr6fMgVsTQ" name="time">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_mqVc8ID3Ee6oVr6fMgVsTQ" name="espera">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
     </ownedAttribute>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_CN88UHtNEe694uZ4xJqXfA" name="move"/>
@@ -34,9 +25,18 @@
     <ownedOperation xmi:type="uml:Operation" xmi:id="_JWnoIHtNEe694uZ4xJqXfA" name="tick"/>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_Kam0sHtNEe694uZ4xJqXfA" name="reparar"/>
     <ownedOperation xmi:type="uml:Operation" xmi:id="_LcmdMHtNEe694uZ4xJqXfA" name="averiar"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_u9WcAID3Ee6oVr6fMgVsTQ" name="checkViaEnLinea">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_5SkjYID3Ee6oVr6fMgVsTQ" name="v" type="_twb1oHZyEe6OQJwjluSPuA"/>
+    </ownedOperation>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_GJt08ID4Ee6oVr6fMgVsTQ" name="irAEstacion"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_IcFgMID4Ee6oVr6fMgVsTQ" name="esperaEstacion"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_ouYRAHZyEe6OQJwjluSPuA" name="Linea"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="_rgi2oHZyEe6OQJwjluSPuA" name="Estacion"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_rgi2oHZyEe6OQJwjluSPuA" name="Estacion">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_KTKWkID4Ee6oVr6fMgVsTQ" name="IsEndOfTheLine" isDerived="true">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+    </ownedAttribute>
+  </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_twb1oHZyEe6OQJwjluSPuA" name="Via">
     <ownedAttribute xmi:type="uml:Property" xmi:id="_n6MpIICFEe6LgoB6Mq18aw" name="viaOcupada" isDerived="true">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
